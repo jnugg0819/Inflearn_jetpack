@@ -20,3 +20,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         db.todoDao().insert(todo)
     }
 }
+
+class MainAndroidViewModel(application: Application): AndroidViewModel(application){
+
+}
