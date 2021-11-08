@@ -6,17 +6,32 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.techtown.maskinfo.model.Store;
+import org.techtown.maskinfo.model.StoreInfo;
+import org.techtown.maskinfo.repository.MaskService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,20 +41,54 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        StoreAdapter adapter = new StoreAdapter();
+        final StoreAdapter adapter = new StoreAdapter();
         recyclerView.setAdapter(adapter);
 
-        List<Store> items = new ArrayList<>();
-        Store store = new Store();
-        store.setAddr("asdfasdf");
-        store.setName("우리 약국");
-        items.add(store);
-        items.add(store);
-        items.add(store);
-        items.add(store);
-        items.add(store);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MaskService.BASE_URL)
+                .addConverterFactory(MoshiConverterFactory.create())
+                .build();
 
-        adapter.updateItems(items);
+        MaskService service = retrofit.create(MaskService.class);
+
+        Call<StoreInfo> storeInfoCall = service.fetchStoreInfo();
+
+        //비동기 처리.
+        storeInfoCall.enqueue(new Callback<StoreInfo>() {
+            @Override
+            public void onResponse(Call<StoreInfo> call, Response<StoreInfo> response) {
+                Log.d(TAG,"onResponse:: refresh");
+                List<Store> items = response.body().getStores();
+                adapter.updateItems(items);
+                getSupportActionBar().setTitle("마스크 재고 있는 곳: "+ items.size() + "곳");
+            }
+
+            @Override
+            public void onFailure(Call<StoreInfo> call, Throwable t) {
+                Log.e(TAG,"onFailure:",t);
+            }
+        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                // refresh
+//                newGame();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 
