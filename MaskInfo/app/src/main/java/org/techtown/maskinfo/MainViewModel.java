@@ -52,6 +52,8 @@ public class MainViewModel extends ViewModel {
                     store.setDistance(distance);
                 }
 
+                Collections.sort(items);
+
                 //백그라운드 에선 postValue.
                 itemLiveData.postValue(items);
             }

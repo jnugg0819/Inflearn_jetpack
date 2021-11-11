@@ -3,7 +3,7 @@ package org.techtown.maskinfo.model;
 
 import com.squareup.moshi.Json;
 
-public class Store {
+public class Store implements Comparable<Store>{
 
     @Json(name = "addr")
     private String addr;
@@ -104,5 +104,10 @@ public class Store {
 
     public void setDistance(double distance) {
         this.distance = distance;
+    }
+
+    @Override
+    public int compareTo(Store store) {
+        return Double.compare(distance, store.distance);
     }
 }
