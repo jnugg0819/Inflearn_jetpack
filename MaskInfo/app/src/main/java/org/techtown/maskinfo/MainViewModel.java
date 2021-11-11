@@ -25,6 +25,7 @@ public class MainViewModel extends ViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();
     public MutableLiveData<List<Store>> itemLiveData = new MutableLiveData<>();
+    public MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>();
     public Location location;
 
     private Retrofit retrofit = new Retrofit.Builder()
@@ -35,6 +36,8 @@ public class MainViewModel extends ViewModel {
     private MaskService service = retrofit.create(MaskService.class);
 
     public void fetchStoreInfo(){
+        //로딩시작.
+        loadingLiveData.setValue(true);
         //비동기 처리.
         service.fetchStoreInfo(location.getLatitude(), location.getLongitude())
                 .enqueue(new Callback<StoreInfo>() {
@@ -56,6 +59,9 @@ public class MainViewModel extends ViewModel {
 
                 //백그라운드 에선 postValue.
                 itemLiveData.postValue(items);
+
+                //로딩끝.
+                loadingLiveData.postValue(false);
             }
 
             @Override
@@ -63,6 +69,9 @@ public class MainViewModel extends ViewModel {
                 Log.e(TAG,"onFailure:",t);
                 //빈거 세팅해주기.
                 itemLiveData.postValue(Collections.emptyList());
+
+                //로딩끝.
+                loadingLiveData.postValue(false);
             }
         });
     }
