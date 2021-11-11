@@ -182,7 +182,7 @@ class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHolder>{
 
         holder.nameTextView.setText(store.getName());
         holder.addressTextView.setText(store.getAddr());
-        holder.distanceTextView.setText("1.0km");
+        holder.distanceTextView.setText(String.format("%.2fkm", store.getDistance()));
 
         String remainStat = "충분";
         String count = "100개이상";

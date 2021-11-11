@@ -34,8 +34,6 @@ public class MainViewModel extends ViewModel {
 
     private MaskService service = retrofit.create(MaskService.class);
 
-
-
     public void fetchStoreInfo(){
         //비동기 처리.
         service.fetchStoreInfo(location.getLatitude(), location.getLongitude())
@@ -46,7 +44,13 @@ public class MainViewModel extends ViewModel {
                 List<Store> items = response.body().getStores()
                         .stream()
                         .filter(item -> item.getRemainStat() != null)
+                        .filter(item -> !item.getRemainStat().equals("empty"))
                         .collect(Collectors.toList());
+
+                for(Store store: items){
+                    double distance = LocationDistance.distance(location.getLatitude(), location.getLongitude(), store.getLat(), store.getLng(), "k");
+                    store.setDistance(distance);
+                }
 
                 //백그라운드 에선 postValue.
                 itemLiveData.postValue(items);
