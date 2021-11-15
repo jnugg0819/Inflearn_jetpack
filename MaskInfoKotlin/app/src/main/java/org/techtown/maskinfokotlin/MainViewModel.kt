@@ -34,7 +34,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             //suspend 메서드는 suspend안에서만 되는데 CoroutineScope는 비동기코드로 suspend안에서 동작가능. (자바의 Thread라 생각하면됨).
             val storeInfo = service.fetchStoreInfo(37.187079,127.043002)
-            itemLiveData.value = storeInfo.stores
+            itemLiveData.value = storeInfo.stores.filter{ it.remain_stat != null}
             //로딩끝.
             loadingLiveData.value = false
         }
