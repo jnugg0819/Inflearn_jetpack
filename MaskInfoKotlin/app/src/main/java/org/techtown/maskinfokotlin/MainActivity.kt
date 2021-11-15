@@ -1,8 +1,10 @@
 package org.techtown.maskinfokotlin
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,6 +25,15 @@ class MainActivity : AppCompatActivity() {
                 RecyclerView.VERTICAL,
                 false)
             adapter = storeAdapter
+        }
+
+        viewModel.apply {
+            itemLiveData.observe(this@MainActivity, Observer {
+                storeAdapter.updateItems(it)
+            })
+            loadingLiveData.observe(this@MainActivity, Observer { isLoading ->
+                progressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
+            })
         }
     }
 }
