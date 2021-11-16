@@ -1,16 +1,14 @@
 package org.techtown.counter
 
-import android.app.Activity
-import android.app.Application
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_main.*
+import org.techtown.counter.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,21 +17,10 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
-        Log.d(TAG,"onCreate: ")
-
-        viewmodel.countLiveData.observe(this, Observer { count ->
-            counter_text.text = "$count"
-        })
-
-        add_button.setOnClickListener {
-            viewmodel.increaseCount()
-        }
-
-        sub_button.setOnClickListener {
-            viewmodel.decreaseCount()
-        }
+        binding.viewModel = viewmodel
+        binding.lifecycleOwner = this //이액티비티에 라이프사이클에 맞춰서 동작하겠다. 해당코드가 있어야 liveData가 xml에 binding됨.
 
     }
 
