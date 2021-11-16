@@ -5,6 +5,7 @@ import android.app.Application
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -64,6 +65,17 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+    }
+
+    //앱이 백그라운드에 오래둘경우 강제종료 됐을시 데이터값이 사라지는데 다시 데이터 불러오는 코드.
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("count", viewmodel.count)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        viewmodel.count = savedInstanceState.getInt("count")
     }
 
     companion object{
