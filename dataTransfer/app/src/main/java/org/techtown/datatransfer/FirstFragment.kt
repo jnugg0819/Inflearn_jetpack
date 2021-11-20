@@ -1,5 +1,6 @@
 package org.techtown.datatransfer
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,13 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_first.*
 
 class FirstFragment : Fragment(R.layout.fragment_first) {
+    val requestPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){ granted ->
+        if(granted){
+            Toast.makeText(requireContext(), "성공", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     val getContent = registerForActivityResult(ActivityResultContracts.GetContent()
     )
@@ -39,9 +47,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
         super.onViewCreated(view, savedInstanceState)
 
         button.setOnClickListener {
-            Intent(requireContext(), ResultActivity::class.java).apply {
-                getStartActivityForResult.launch(this)
-            }
+           requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 }
