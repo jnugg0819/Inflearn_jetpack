@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import dagger.hilt.android.AndroidEntryPoint
 import org.techtown.hilteexample.R
-import org.techtown.hilteexample.ui.data.MyRepository
+import org.techtown.hilteexample.data.MyRepository
 import javax.inject.Inject
 
 @AndroidEntryPoint
