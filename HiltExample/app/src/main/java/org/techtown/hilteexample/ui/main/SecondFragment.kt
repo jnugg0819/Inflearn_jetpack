@@ -7,14 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_second.*
 import org.techtown.hilteexample.R
 import org.techtown.hilteexample.ui.data.MyRepository
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class SecondFragment : Fragment(R.layout.fragment_second) {
 
-    val repository = MyRepository()
+    @Inject
+    lateinit var repository: MyRepository
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
