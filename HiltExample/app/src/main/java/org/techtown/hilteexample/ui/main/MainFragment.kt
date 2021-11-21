@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -18,6 +19,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
 
+    private val activityViewModel by viewModels<MainViewModel>()
+    private val viewModel by viewModels<MainViewModel>()
     @Inject
     lateinit var repository: MyRepository
 
@@ -44,5 +47,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         Log.d("MainFragment", "${repository.hashCode()}")
         Log.d("MainFragment", "appHash: $applicationHash")
         Log.d("MainFragment", "activityHash: $activityHash")
+        Log.d("MainFragment", "viewModel: ${viewModel.getRepositoryHash()}")
+        Log.d("MainFragment", "activityViewModel: ${activityViewModel.getRepositoryHash()}")
     }
 }
