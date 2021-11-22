@@ -1,9 +1,15 @@
 package org.techtown.maskinfokotlin
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.techtown.maskinfokotlin.model.Store
@@ -14,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val service: MaskService
+    private val service: MaskService,
+    private val fusedLocationClient: FusedLocationProviderClient
 ): ViewModel() {
 
     val itemLiveData = MutableLiveData<List<Store>>()
@@ -24,16 +31,24 @@ class MainViewModel @Inject constructor(
         fetchStoreInfo()
     }
 
+    @SuppressLint("MissingPermission")
     fun fetchStoreInfo(){
         //로딩 시작.
         loadingLiveData.value = true
 
-        viewModelScope.launch {
-            //suspend 메서드는 suspend안에서만 되는데 CoroutineScope는 비동기코드로 suspend안에서 동작가능. (자바의 Thread라 생각하면됨).
-            val storeInfo = service.fetchStoreInfo(37.187079,127.043002)
-            itemLiveData.value = storeInfo.stores.filter{ it.remain_stat != null}
-            //로딩끝.
-            loadingLiveData.value = false
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+
+            viewModelScope.launch {
+                //suspend 메서드는 suspend안에서만 되는데 CoroutineScope는 비동기코드로 suspend안에서 동작가능. (자바의 Thread라 생각하면됨).
+                val storeInfo = service.fetchStoreInfo(location.latitude,location.longitude)
+                itemLiveData.value = storeInfo.stores.filter{ store->
+                    store.remain_stat !=null
+                }
+                //로딩끝.
+                loadingLiveData.value = false
+            }
+        }.addOnFailureListener{ exception ->
+            loadingLiveData.value =false
         }
 
     }
